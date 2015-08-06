@@ -18,6 +18,7 @@ public final class Twinkle {
 		final HttpServer httpServer = vertx.createHttpServer(httpServerOptions());
 		final Router router = Router.router(vertx);
 
+		router.get("/ping").handler(context -> context.response().end("pong"));
 		router.mountSubRouter("/stats", new Metrics(vertx, httpServer).router());
 
 		httpServer.requestHandler(router::accept).listen(8080, result -> {

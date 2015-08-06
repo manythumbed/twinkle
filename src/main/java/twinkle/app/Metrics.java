@@ -1,7 +1,6 @@
 package twinkle.app;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.dropwizard.MetricsService;
@@ -26,14 +25,13 @@ final class Metrics {
 	Router router()	{
 		final Router router = Router.router(vertx);
 
-		router.route(HttpMethod.GET, "/*").produces("application/json").handler(context -> {
+		router.get("/*").produces("application/json").handler(context -> {
 			context.response().putHeader("content-type", "application/json");
 			context.next();
 		});
 
-		router.route(HttpMethod.GET, "/server").handler(context -> context.response().end(server().encodePrettily()));
-
-		router.route(HttpMethod.GET, "/http").handler(context -> context.response().end(http().encodePrettily()));
+		router.get("/server").handler(context -> context.response().end(server().encodePrettily()));
+		router.get("/http").handler(context -> context.response().end(http().encodePrettily()));
 
 		return router;
 	}

@@ -18,11 +18,11 @@ final class Metrics {
 		this.metricsService = MetricsService.create(vertx);
 	}
 
-	private JsonObject server()	{
+	private JsonObject server() {
 		return metricsService.getMetricsSnapshot(vertx);
 	}
 
-	Router router()	{
+	Router router() {
 		final Router router = Router.router(vertx);
 
 		router.get("/*").produces("application/json").handler(context -> {
@@ -36,7 +36,7 @@ final class Metrics {
 		return router;
 	}
 
-	private JsonObject http()	{
+	private JsonObject http() {
 		return metricsService.getMetricsSnapshot(httpServer);
 	}
 }

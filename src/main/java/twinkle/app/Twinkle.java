@@ -14,13 +14,11 @@ public final class Twinkle {
 	private Twinkle() {
 		final Logger logger = LoggerFactory.getLogger(Twinkle.class);
 
-		final Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true)));
-		final HttpServer httpServer = vertx.createHttpServer(new HttpServerOptions().setCompressionSupported(true));
+		final Vertx vertx = Vertx.vertx(vertxOptions());
+		final HttpServer httpServer = vertx.createHttpServer(httpServerOptions());
 		final Router router = Router.router(vertx);
 
-		final Metrics metrics = new Metrics(vertx, httpServer);
-
-		router.mountSubRouter("/stats", metrics.router());
+		router.mountSubRouter("/stats", new Metrics(vertx, httpServer).router());
 
 		httpServer.requestHandler(router::accept).listen(8080, result -> {
 			if (result.succeeded()) {
@@ -30,6 +28,15 @@ public final class Twinkle {
 				vertx.close(shutdown -> logger.info("Twinkle shut down"));
 			}
 		});
+	}
+
+	private VertxOptions vertxOptions() {
+		return new VertxOptions()
+			.setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true));
+	}
+
+	private HttpServerOptions httpServerOptions() {
+		return new HttpServerOptions().setCompressionSupported(true);
 	}
 
 	public static void main(final String[] arguments) {
